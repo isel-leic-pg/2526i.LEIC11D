@@ -1,0 +1,11 @@
+A solução é ativar “Use Unicode UTF-8 for worldwide language support” no Windows 10/11.
+
+EN:
+Control Panel > Clock and Region > Administrative > Change System local...
+Select: Use Unicode UTF-8 for worldwide language support.
+
+PT:
+Painel de Controlo> Região > Administrativo > Alterar definições de local do sistema…
+Marcar: Usar Unicode UTF-8 para suporte de linguagem mundial.
+
+Depois é necessário reiniciar o PC.
