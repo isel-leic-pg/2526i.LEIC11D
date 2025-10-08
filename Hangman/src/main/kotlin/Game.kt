@@ -2,40 +2,56 @@
 const val MAX_ERRORS = 6
 
 fun main() {
-    var errors = 0
-    val secret = "PROGRAMA"
+    val secret = words.random().uppercase()
+    val secret2 = removePontuation(secret)
     var word: List<Char> = secret.map{ '_' }
     var used = ""
-    printErrors(errors)
+    var errors = 0
+    printGallows(errors)
     do {
         println(word.joinToString(" "))
         val guess = readGuess(used)
         used += guess
-        if (guess in secret) {
-            word = update(secret,word,guess)
-        } else {
-            errors++
-            printErrors(errors)
-        }
+        if (guess in secret2)
+            word = update(secret,secret2,word,guess)
+        else
+            printGallows(++errors)
     } while (errors < MAX_ERRORS && !completed(word))
+
+    val status = if (errors==MAX_ERRORS) "LOSE" else "WIN"
+    println("YOU $status -> ${secret.toList().joinToString(" ")}")
 }
 
-fun update(s: String, w: List<Char>, c: Char): List<Char> {
+fun removePontuation(s: String): String =
+    s.map { when(it) {
+        in "ÁÀÃÂ" -> 'A'
+        in "ÉÈÊ"  -> 'E'
+        in "ÍÌ"   -> 'I'
+        in "ÓÒÕÔ" -> 'O'
+        in "ÚÙ"   -> 'U'
+        'Ç'       -> 'C'
+        else -> it
+    } }.joinToString("")
+
+fun update(s: String, s2: String, w: List<Char>, c: Char): List<Char> =
+    w.mapIndexed { idx, it ->
+        if (s2[idx] == c) s[idx] else it
+    }
+/*{
     var res: List<Char> = emptyList()
     for(idx in s.indices) {
-        if (s[idx] == c) res = res + c
+        if (s2[idx] == c) res = res + s[idx]
         else res = res + w[idx]
     }
     return res
-}
+}*/
 
-fun printErrors(n: Int) {
-    println("Erros: $n")
-}
-
-fun completed(w: List<Char>): Boolean {
-    return false
-}
+fun completed(w: List<Char>): Boolean = w.none{ it=='_' }
+/*{
+    for (c in w)
+        if (c == '_') return false
+    return true
+}*/
 
 fun readGuess(used: String): Char {
     while (true) {

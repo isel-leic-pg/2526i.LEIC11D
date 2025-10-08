@@ -1,6 +1,6 @@
 fun main() {
     for (errors in gallows.indices)
-        printGallows(errors)
+        println(gallows[errors].trimIndent())
 }
 
 fun printGallows(numberOfparts: Int) {
@@ -8,7 +8,7 @@ fun printGallows(numberOfparts: Int) {
 }
 
 val gallows = listOf(
-""" 
+"""
  +---.
      |
      |
