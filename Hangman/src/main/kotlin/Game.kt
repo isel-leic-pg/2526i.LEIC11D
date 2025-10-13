@@ -1,27 +1,9 @@
 
-const val MAX_ERRORS = 6
-
-fun main() {
-    val secret = words.random().uppercase()
-    val secret2 = removePontuation(secret)
-    var word: List<Char> = secret.map{ '_' }
-    var used = ""
-    var errors = 0
-    printGallows(errors)
-    do {
-        println(word.joinToString(" "))
-        val guess = readGuess(used)
-        used += guess
-        if (guess in secret2)
-            word = update(secret,secret2,word,guess)
-        else
-            printGallows(++errors)
-    } while (errors < MAX_ERRORS && !completed(word))
-
-    val status = if (errors==MAX_ERRORS) "LOSE" else "WIN"
-    println("YOU $status -> ${secret.toList().joinToString(" ")}")
-}
-
+/**
+ * Retira os acentos e as cedilhas das letras.
+ * @param s Palavra a considerar
+ * @return A palavra sen acentos e cedilhas
+ */
 fun removePontuation(s: String): String =
     s.map { when(it) {
         in "ÁÀÃÂ" -> 'A'
@@ -33,37 +15,25 @@ fun removePontuation(s: String): String =
         else -> it
     } }.joinToString("")
 
+/**
+ * Retorna o novo estado da palavra descoberta.
+ * @param s A palvara escondida
+ * @param s2 A palvara escondida sem acentos
+ * @param w O estado atual da palavra a descobrir
+ * @param c A letra da tentativa de descobrir
+ * @return O estado atual da palavra a descobrir
+ */
 fun update(s: String, s2: String, w: List<Char>, c: Char): List<Char> =
     w.mapIndexed { idx, it ->
         if (s2[idx] == c) s[idx] else it
     }
-/*{
-    var res: List<Char> = emptyList()
-    for(idx in s.indices) {
-        if (s2[idx] == c) res = res + s[idx]
-        else res = res + w[idx]
-    }
-    return res
-}*/
 
+/**
+ * @param w Estado atual da palavra a descobrir.
+ * @return true se o estado atual tem as letras todas descobertas.
+ */
 fun completed(w: List<Char>): Boolean = w.none{ it=='_' }
-/*{
-    for (c in w)
-        if (c == '_') return false
-    return true
-}*/
 
-fun readGuess(used: String): Char {
-    while (true) {
-        print("$used: ")
-        val line = readln().trim()
-        if (line.length == 1) {
-            val c = line[0].uppercaseChar()
-            if (c !in used) return c
-        }
-        println("Invalid guess $line")
-    }
-}
 
 
 
