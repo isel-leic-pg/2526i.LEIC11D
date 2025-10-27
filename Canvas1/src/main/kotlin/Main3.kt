@@ -1,6 +1,5 @@
 import pt.isel.canvas.*
 
-data class Point(val x: Int, val y: Int)
 
 fun main() {
     var point = Point(300,200)
@@ -14,7 +13,6 @@ fun main() {
             arena.erase()
             arena.drawCircle(point.x,point.y,10,RED)
         }
-
     }
     onFinish {
         println("Bye.")
