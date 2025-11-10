@@ -1,9 +1,5 @@
 import pt.isel.canvas.*
 
-const val CELL_SIZE = 128
-const val GRID_WIDTH = 11
-const val GRID_HEIGHT = 7
-
 /**
  * Simple canvas-based application that allows moving a hero character within a grid using arrow keys.
  */
@@ -11,55 +7,38 @@ fun main() {
     onStart {
         val arena = Canvas(GRID_WIDTH*CELL_SIZE, GRID_HEIGHT*CELL_SIZE, BLACK)
         var pos = Cell(GRID_HEIGHT/2,GRID_WIDTH/2)
-        arena.drawGrid()
-        arena.drawHero(pos)
+        updateView(arena,pos)
         arena.onKeyPressed { key ->
-            pos = when(key.code) {
-                LEFT_CODE -> Cell(pos.row, pos.col-1)
-                RIGHT_CODE -> Cell(pos.row, pos.col+1)
-                UP_CODE -> Cell(pos.row-1, pos.col)
-                DOWN_CODE -> Cell(pos.row+1, pos.col)
-                else -> pos
+            val dir = key.toDir()
+            if (dir!=null && (pos+dir).isInGrid()) {
+                pos += dir
+                updateView(arena, pos)
             }
-            arena.erase()
-            arena.drawGrid()
-            arena.drawHero(pos)
         }
     }
     onFinish {  }
 }
 
-/**
- * Draws the hero character at the specified cell position on the canvas.
- * @receiver The canvas on which to draw the hero.
- * @param p The cell position where the hero should be drawn.
- */
-fun Canvas.drawHero(p: Cell) {
-    drawImage(
-        fileName = "hero|48,0,48,48",
-        xLeft = p.col*CELL_SIZE,
-        yTop = p.row*CELL_SIZE,
-        width = CELL_SIZE,
-        height = CELL_SIZE
-    )
+enum class Dir { LEFT, RIGHT, UP, DOWN }
+
+operator fun Cell.plus(dir: Dir): Cell = when(dir) {
+    Dir.LEFT -> Cell(row,col-1)
+    Dir.RIGHT -> Cell(row,col+1)
+    Dir.UP -> Cell(row-1,col)
+    Dir.DOWN -> Cell(row+1,col)
 }
 
-/**
- * Represents a cell in the grid with row and column indices.
- * @property row The row index of the cell.
- * @property col The column index of the cell.
- */
-data class Cell(val row: Int, val col: Int)
-
-/**
- * Draws a grid on the canvas.
- * @receiver The canvas on which to draw the grid.
- */
-fun Canvas.drawGrid() {
-    for(x in 0..<width step CELL_SIZE)
-        drawLine(x,0, x,height, YELLOW, 1)
-    repeat(GRID_HEIGHT) {
-        val y = it * CELL_SIZE
-        drawLine(0,y, width,y, YELLOW, 1)
-    }
+fun KeyEvent.toDir(): Dir? = when(code) {
+    LEFT_CODE -> Dir.LEFT
+    RIGHT_CODE -> Dir.RIGHT
+    UP_CODE -> Dir.UP
+    DOWN_CODE -> Dir.DOWN
+    else -> null
 }
+
+private fun updateView(arena: Canvas, pos: Cell) {
+    arena.erase()
+    arena.drawGrid()
+    arena.drawHero(pos)
+}
+
