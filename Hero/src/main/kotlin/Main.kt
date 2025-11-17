@@ -6,39 +6,38 @@ import pt.isel.canvas.*
 fun main() {
     onStart {
         val arena = Canvas(GRID_WIDTH*CELL_SIZE, GRID_HEIGHT*CELL_SIZE, BLACK)
-        var pos = Cell(GRID_HEIGHT/2,GRID_WIDTH/2)
-        updateView(arena,pos)
+        var hero = Actor(Cell(GRID_HEIGHT/2,GRID_WIDTH/2), Dir.DOWN)
+        arena.update(hero)
         arena.onKeyPressed { key ->
             val dir = key.toDir()
-            if (dir!=null && (pos+dir).isInGrid()) {
-                pos += dir
-                updateView(arena, pos)
+            if (dir!=null) {
+                val h = hero.move(dir)
+                if (h!=hero) {
+                    hero = h
+                    arena.update(hero)
+                }
             }
         }
     }
     onFinish {  }
 }
 
-enum class Dir { LEFT, RIGHT, UP, DOWN }
+data class Actor(val pos: Cell, val dir: Dir)
 
-operator fun Cell.plus(dir: Dir): Cell = when(dir) {
-    Dir.LEFT -> Cell(row,col-1)
-    Dir.RIGHT -> Cell(row,col+1)
-    Dir.UP -> Cell(row-1,col)
-    Dir.DOWN -> Cell(row+1,col)
+fun Actor.move(to: Dir): Actor {
+    val destination = pos + to
+    return if (!destination.isInGrid()) copy(dir = to)
+           else Actor(destination, to)
 }
 
-fun KeyEvent.toDir(): Dir? = when(code) {
-    LEFT_CODE -> Dir.LEFT
-    RIGHT_CODE -> Dir.RIGHT
-    UP_CODE -> Dir.UP
-    DOWN_CODE -> Dir.DOWN
-    else -> null
-}
-
-private fun updateView(arena: Canvas, pos: Cell) {
-    arena.erase()
-    arena.drawGrid()
-    arena.drawHero(pos)
+/**
+ * Updates the canvas view by erasing it, drawing the grid, and drawing the hero at the specified position.
+ * @param this@update The canvas to update.
+ * @param pos The position of the hero.
+ */
+private fun Canvas.update(h: Actor) {
+    erase()
+    drawGrid()
+    drawHero(h)
 }
 

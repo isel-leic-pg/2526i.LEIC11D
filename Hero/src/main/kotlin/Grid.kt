@@ -25,4 +25,9 @@ fun Canvas.drawGrid() {
     }
 }
 
+/**
+ * Checks if the cell is within the bounds of the grid.
+ * @receiver The cell to check.
+ * @return True if the cell is within the grid, false otherwise.
+ */
 fun Cell.isInGrid() = row in 0..<GRID_HEIGHT && col in 0..<GRID_WIDTH
