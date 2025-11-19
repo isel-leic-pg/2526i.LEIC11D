@@ -6,38 +6,30 @@ import pt.isel.canvas.*
 fun main() {
     onStart {
         val arena = Canvas(GRID_WIDTH*CELL_SIZE, GRID_HEIGHT*CELL_SIZE, BLACK)
-        var hero = Actor(Cell(GRID_HEIGHT/2,GRID_WIDTH/2), Dir.DOWN)
-        arena.update(hero)
+        var game = Game()
+        arena.update(game)
         arena.onKeyPressed { key ->
             val dir = key.toDir()
             if (dir!=null) {
-                val h = hero.move(dir)
-                if (h!=hero) {
-                    hero = h
-                    arena.update(hero)
-                }
+                game = game.moveHero(dir)
+                arena.update(game)
             }
         }
     }
     onFinish {  }
 }
 
-data class Actor(val pos: Cell, val dir: Dir)
-
-fun Actor.move(to: Dir): Actor {
-    val destination = pos + to
-    return if (!destination.isInGrid()) copy(dir = to)
-           else Actor(destination, to)
-}
-
 /**
- * Updates the canvas view by erasing it, drawing the grid, and drawing the hero at the specified position.
- * @param this@update The canvas to update.
- * @param pos The position of the hero.
+ * Updates the canvas view by erasing it, drawing the grid,
+ * and drawing the hero, all robots and garbage.
+ * @receiver The canvas to update.
+ * @param g The current game state.
  */
-private fun Canvas.update(h: Actor) {
+private fun Canvas.update(g: Game) {
     erase()
     drawGrid()
-    drawHero(h)
+    drawHero(g.hero)
+    g.robots.forEach { drawRobot(it) }
+    g.garbage.forEach { drawCell("garbage.png",it) }
 }
 

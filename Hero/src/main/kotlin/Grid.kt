@@ -31,3 +31,20 @@ fun Canvas.drawGrid() {
  * @return True if the cell is within the grid, false otherwise.
  */
 fun Cell.isInGrid() = row in 0..<GRID_HEIGHT && col in 0..<GRID_WIDTH
+
+
+/**
+ * Draws an image at the specified cell position on the canvas.
+ * @receiver The canvas on which to draw the image.
+ * @param image The image file name to draw.
+ * @param pos The cell position where the image should be drawn.
+ */
+fun Canvas.drawCell(image: String, pos: Cell) {
+    drawImage(
+        image,
+        pos.col*CELL_SIZE,
+        pos.row*CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE
+    )
+}

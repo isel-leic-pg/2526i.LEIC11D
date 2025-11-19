@@ -7,7 +7,12 @@ import pt.isel.canvas.UP_CODE
 /**
  * Represents a direction for moving the hero.
  */
-enum class Dir { LEFT, RIGHT, UP, DOWN }
+enum class Dir(val dRow: Int, val dCol: Int) {
+    LEFT(0,-1), RIGHT(0,+1), UP(-1,0), DOWN(+1,0),
+    UP_LEFT(-1,-1), UP_RIGHT(-1,+1), DOWN_LEFT(+1,-1), DOWN_RIGHT(+1,+1)
+}
+
+fun Dir.isDiagonal() = dRow != 0 && dCol != 0
 
 /**
  * Adds a direction to a cell, returning a new cell in the specified direction.
@@ -17,22 +22,29 @@ enum class Dir { LEFT, RIGHT, UP, DOWN }
  * @param dir The direction to move.
  * @return A new cell moved in the specified direction.
  */
-operator fun Cell.plus(dir: Dir): Cell = when(dir) {
-    Dir.LEFT -> Cell(row,col-1)
-    Dir.RIGHT -> Cell(row,col+1)
-    Dir.UP -> Cell(row-1,col)
-    Dir.DOWN -> Cell(row+1,col)
-}
+operator fun Cell.plus(dir: Dir): Cell = Cell(row+dir.dRow, col+dir.dCol)
 
 /**
- * Converts a KeyEvent to a Dir if it corresponds to an arrow key.
+ * Key codes for diagonal direction keys.
+ */
+const val PGUP_CODE = 33
+const val PGDOWN_CODE = 34
+const val END_CODE = 35
+const val HOME_CODE = 36
+
+/**
+ * Converts a KeyEvent to a Dir if it corresponds to a direction key.
  * @receiver The KeyEvent to convert.
- * @return The corresponding Dir or null if the key is not an arrow key.
+ * @return The corresponding Dir or null if the key is not a direction.
  */
 fun KeyEvent.toDir(): Dir? = when(code) {
     LEFT_CODE -> Dir.LEFT
     RIGHT_CODE -> Dir.RIGHT
     UP_CODE -> Dir.UP
     DOWN_CODE -> Dir.DOWN
+    HOME_CODE -> Dir.UP_LEFT
+    PGUP_CODE -> Dir.UP_RIGHT
+    PGDOWN_CODE -> Dir.DOWN_RIGHT
+    END_CODE -> Dir.DOWN_LEFT
     else -> null
 }
