@@ -1,8 +1,5 @@
-import pt.isel.canvas.DOWN_CODE
-import pt.isel.canvas.KeyEvent
-import pt.isel.canvas.LEFT_CODE
-import pt.isel.canvas.RIGHT_CODE
-import pt.isel.canvas.UP_CODE
+import pt.isel.canvas.*
+import Dir.*
 
 /**
  * Represents a direction for moving the hero.
@@ -38,13 +35,18 @@ const val HOME_CODE = 36
  * @return The corresponding Dir or null if the key is not a direction.
  */
 fun KeyEvent.toDir(): Dir? = when(code) {
-    LEFT_CODE -> Dir.LEFT
-    RIGHT_CODE -> Dir.RIGHT
-    UP_CODE -> Dir.UP
-    DOWN_CODE -> Dir.DOWN
-    HOME_CODE -> Dir.UP_LEFT
-    PGUP_CODE -> Dir.UP_RIGHT
-    PGDOWN_CODE -> Dir.DOWN_RIGHT
-    END_CODE -> Dir.DOWN_LEFT
+    LEFT_CODE -> LEFT
+    RIGHT_CODE -> RIGHT
+    UP_CODE -> UP
+    DOWN_CODE -> DOWN
+    HOME_CODE -> UP_LEFT
+    PGUP_CODE -> UP_RIGHT
+    PGDOWN_CODE -> DOWN_RIGHT
+    END_CODE -> DOWN_LEFT
     else -> null
+}
+
+fun main() {
+    for(d in Dir.entries)
+        println(d.ordinal)
 }
