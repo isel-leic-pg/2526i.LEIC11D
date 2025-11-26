@@ -1,13 +1,12 @@
+
+
 /**
  * Data classes representing the game state.
  * Includes the hero, robots, and garbage positions.
  */
 data class Game(
     val hero: Actor = Actor(Cell(GRID_HEIGHT/2,GRID_WIDTH/2), Dir.DOWN),
-    val robots: List<Actor> = listOf(
-        Actor(Cell(0,0),Dir.DOWN),
-        Actor(Cell(1,1),Dir.RIGHT)
-    ),
+    val robots: List<Actor> = randomRobots(hero.pos),
     val garbage: List<Cell> = emptyList(),
 )
 
@@ -21,8 +20,16 @@ data class Game(
  */
 fun Game.moveHero(dir: Dir): Game {
     val h = hero.move(dir)
-    return copy(
+    val r = robots.map { it.moveTo(h.pos) }
+    val collisions: List<Cell> = r.collisions()
+    return Game(
         hero = h,
-        robots = robots.map { it.moveTo(h.pos) }
+        robots = r.filter{ it.pos !in collisions } ,
+        garbage = garbage + collisions
     )
 }
+
+
+
+
+

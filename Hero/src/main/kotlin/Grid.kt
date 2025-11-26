@@ -48,3 +48,9 @@ fun Canvas.drawCell(image: String, pos: Cell) {
         CELL_SIZE
     )
 }
+
+val allCells = List(GRID_HEIGHT*GRID_WIDTH) { idx ->
+    Cell(row = idx / GRID_WIDTH, col = idx % GRID_WIDTH )
+}
+
+

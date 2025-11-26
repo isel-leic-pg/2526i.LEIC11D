@@ -28,6 +28,7 @@ fun Actor.move(to: Dir): Actor {
  * @return A new actor moved one step towards the target cell.
  */
 fun Actor.moveTo(to: Cell): Actor {
+    if (pos == to) return this
     val dRow = abs(to.row - pos.row)
     val dCol = abs(to.col - pos.col)
     val dir = when {
