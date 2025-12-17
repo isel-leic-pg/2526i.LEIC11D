@@ -9,9 +9,10 @@ fun main() {
         var game = Game()
         arena.update(game)
         arena.onKeyPressed { key ->
-            val dir = key.toDir()
-            if (dir!=null) {
-                game = game.moveHero(dir)
+            if (!game.isOver()) {
+                val dir = key.toDir()
+                if (dir != null)  game = game.moveHero(dir)
+                if (key.char == '*') game = game.jumpHero()
                 arena.update(game)
             }
         }
@@ -31,5 +32,9 @@ private fun Canvas.update(g: Game) {
     drawHero(g.hero)
     g.robots.forEach { drawRobot(it) }
     g.garbage.forEach { drawCell("garbage.png",it) }
+    if (g.isOver()) {
+        val txt = if (g.heroIsDead()) "GAME OVER" else "You WIN"
+        drawText(width/2-(20*txt.length/2), height/2, txt, WHITE )
+    }
 }
 

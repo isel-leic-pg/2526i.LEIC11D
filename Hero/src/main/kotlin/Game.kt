@@ -19,17 +19,23 @@ data class Game(
  * @return A new game state with updated positions.
  */
 fun Game.moveHero(dir: Dir): Game {
-    val h = hero.move(dir)
-    val r = robots.map { it.moveTo(h.pos) }
-    val collisions: List<Cell> = r.collisions()
+    val newHero = hero.move(dir)
+    val newRobots = robots.map { it.moveTo(newHero.pos) }
+    val collisions: List<Cell> = newRobots.collisions()
+    val newGarbage = garbage + collisions
     return Game(
-        hero = h,
-        robots = r.filter{ it.pos !in collisions } ,
-        garbage = garbage + collisions
+        hero = newHero,
+        robots = newRobots.filter{ it.pos !in newGarbage } ,
+        garbage = newGarbage
     )
 }
 
+fun Game.heroIsDead() = hero.pos in garbage || robots.any{ it.pos == hero.pos }
 
+fun Game.isOver() = robots.isEmpty() || heroIsDead()
 
-
+fun Game.jumpHero(): Game {
+    val freePos = (allCells - garbage).filter { p -> robots.all{ r -> r.pos != p } }.random()
+    return copy(hero = hero.copy(pos = freePos))
+}
 
